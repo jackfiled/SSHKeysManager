@@ -10,10 +10,12 @@ namespace SSHKeysManager.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserContext _userContext;
+        private readonly IConfiguration _configuration;
 
-        public UserController(UserContext userContext)
+        public UserController(UserContext userContext, IConfiguration configuration)
         {
             _userContext = userContext;
+            _configuration = configuration;
         }
 
         [HttpGet]
