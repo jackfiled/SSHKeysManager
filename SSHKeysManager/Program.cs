@@ -24,13 +24,14 @@ builder.Services.AddDbContext<UserContext>(options =>
 
 // 添加用户Jwt验证部分
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer("userAuthenication", options =>
+    .AddJwtBearer("userAuthentication", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+            ValidateAudience = false,
 
             ValidIssuer = Const.Issuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret)),
