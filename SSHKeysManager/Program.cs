@@ -22,9 +22,9 @@ builder.Services.AddDbContext<UserContext>(options =>
     options.UseSqlite(_connection);
 });
 
-// 添加Jwt验证部分
+// 添加用户Jwt验证部分
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    .AddJwtBearer("userAuthenication", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -36,6 +36,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret)),
         };
     });
+
+// 初始化数据库
+Utils.SetupDatabase();
 
 
 var app = builder.Build();

@@ -43,6 +43,7 @@ namespace SSHKeysManager.Controllers
             }
             else
             {
+                loginModel.Password = Utils.HashPassword10000(loginModel.Password);
                 var user = await _userContext.Users.SingleAsync(u => u.Password == loginModel.Password);
                 
                 // 登录之后还是返回一些基本的信息
@@ -77,12 +78,7 @@ namespace SSHKeysManager.Controllers
             newUser.EmailAddress = registerModel.EmailAddress;
             newUser.Name = registerModel.Name;
             newUser.Permission = (int)UserPermission.User;
-            string password = registerModel.Password;
-            for (int i = 0; i < 10000; i++)
-            {
-                password = Utils.Hash256(password, Const.PasswordSalt);
-            }
-            newUser.Password= password;
+            newUser.Password = Utils.HashPassword10000(registerModel.Password);
 
             _userContext.Users.Add(newUser);
             await _userContext.SaveChangesAsync();
@@ -107,12 +103,7 @@ namespace SSHKeysManager.Controllers
 
             var user = await _userContext.Users.SingleAsync(u => u.EmailAddress == passwordModel.EmailAddress);
 
-            string password = passwordModel.newPassword;
-            for (int i = 0; i < 10000; i++)
-            {
-                password = Utils.Hash256(password, Const.PasswordSalt);
-            }
-            user.Password = password;
+            user.Password = Utils.HashPassword10000(passwordModel.newPassword);
 
             await _userContext.SaveChangesAsync();
             return Ok();
@@ -140,10 +131,7 @@ namespace SSHKeysManager.Controllers
             }
 
             // 密码加盐哈希10000次
-            for (int i = 0; i < 10000; i++)
-            {
-                password = Utils.Hash256(password, Const.PasswordSalt);
-            }
+            password = Utils.HashPassword10000(password);
 
             if (user.Password != password)
             {
