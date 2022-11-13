@@ -30,14 +30,8 @@ namespace SSHKeysManager.Controllers
                 .Where(k => k.UserId== user)
                 .ToListAsync();
 
-            if (keys.Any())
-            {
-                return Ok(keys);
-            }
-            else
-            {
-                return NotFound();
-            }
+            // 这里没有校验请求的用户是否存在
+            return Ok(keys);
         }
 
         [HttpGet("{user}/{id}")]

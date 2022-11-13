@@ -3,6 +3,9 @@
 
 namespace SSHKeysManager.Models
 {
+    /// <summary>
+    /// 用户数据模型
+    /// </summary>
     public class User
     {
         public long Id { get; set; }
