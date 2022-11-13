@@ -8,7 +8,7 @@ namespace SSHKeysManager.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "userAuthentication")]
+    [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
     public class UserController : ControllerBase
     {
         private readonly UserContext _userContext;

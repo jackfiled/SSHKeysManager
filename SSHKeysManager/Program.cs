@@ -1,12 +1,14 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using System.Data.Common;
 
 using SSHKeysManager.Models;
 using SSHKeysManager.Common;
-using System.Text;
+using SSHKeysManager.Auth;
+using SSHKeysManager.Auth.PolicyHandlers;
+using SSHKeysManager.Auth.PolicyRequirements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,21 +24,25 @@ builder.Services.AddDbContext<UserContext>(options =>
     options.UseSqlite(_connection);
 });
 
-// 添加用户Jwt验证部分
+// 添加授权要求处理程序
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+
+// 添加Jwt验证部分
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("userAuthentication", options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false,
-
-            ValidIssuer = Const.Issuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret)),
-        };
+        // 用户校验参数
+        options.TokenValidationParameters = Authentication.GenerateUserJWTTokenValidationParameters();
     });
+
+// 添加授权部分
+builder.Services.AddAuthorization(options =>
+{
+    // 对用户是否为管理员的要求
+    options.AddPolicy("IsAdministrator", policy => 
+        policy.Requirements.Add(new PermissionRequirement(UserPermission.Administrator)));
+
+});
 
 // 初始化数据库
 Utils.SetupDatabase();
