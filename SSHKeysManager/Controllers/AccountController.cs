@@ -146,8 +146,10 @@ namespace SSHKeysManager.Controllers
             };
 
             string? jwtSecret = _configuration["JwtSecret"];
-            SymmetricSecurityKey key;
-            // 如果在配置文件中没有读取到JWT密钥配置
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret));
+            // 由于目前在验证身份中间件中无法访问依赖注入框架
+            // 暂时无法自定义生成JWT令牌的密钥
+            /*// 如果在配置文件中没有读取到JWT密钥配置
             // 采用程序中常量的默认值
             if (jwtSecret != null)
             {
@@ -156,7 +158,7 @@ namespace SSHKeysManager.Controllers
             else
             {
                 key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret));
-            }
+            }*/
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
