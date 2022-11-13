@@ -42,6 +42,19 @@ namespace SSHKeysManager.Common
             return password;
         }
 
+        /// <summary>
+        /// 随机生成32位字符串令牌
+        /// </summary>
+        /// <returns></returns>
+        public static string GenerateRandomToken()
+        {
+            Random random = new Random();
+            byte[] bytes = new Byte[32];
+
+            random.NextBytes(bytes);
+            return Convert.ToBase64String(bytes);
+        }
+
         public static void SetupDatabase()
         {
             // 建立数据库连接
