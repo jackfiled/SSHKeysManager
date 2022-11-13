@@ -16,11 +16,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // 添加Sqlite数据库服务
+// Sqlite数据库连接
+DbConnection _connection = new SqliteConnection("Filename=example.db");
+_connection.Open();
 builder.Services.AddDbContext<UserContext>(options =>
 {
-    DbConnection _connection = new SqliteConnection("Filename=example.db");
-    _connection.Open();
-
+    options.UseSqlite(_connection);
+});
+builder.Services.AddDbContext<ServerContext>(options =>
+{
+    options.UseSqlite(_connection);
+});
+builder.Services.AddDbContext<SSHKeysContext>(options =>
+{
+    options.UseSqlite(_connection);
+});
+builder.Services.AddDbContext<UserServerRelationContext>(options =>
+{
     options.UseSqlite(_connection);
 });
 
