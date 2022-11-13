@@ -38,6 +38,8 @@ builder.Services.AddDbContext<UserServerRelationContext>(options =>
 
 // 添加授权要求处理程序
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsAdministratorHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsOwnerHandler>();
 
 // 添加Jwt验证部分
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -53,7 +55,8 @@ builder.Services.AddAuthorization(options =>
     // 对用户是否为管理员的要求
     options.AddPolicy("IsAdministrator", policy => 
         policy.Requirements.Add(new PermissionRequirement(UserPermission.Administrator)));
-
+    options.AddPolicy("IsAdministratorOrOwner", policy =>
+        policy.Requirements.Add(new IsAdministratorOrOwnerRequirement()));
 });
 
 // 初始化数据库

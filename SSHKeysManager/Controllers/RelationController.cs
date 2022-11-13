@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSHKeysManager.Models;
 
@@ -6,6 +7,7 @@ namespace SSHKeysManager.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(AuthenticationSchemes = "userAuthentication")]
     public class RelationController : ControllerBase
     {
         private readonly UserServerRelationContext userServerRelationContext;
@@ -48,6 +50,7 @@ namespace SSHKeysManager.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
         public async Task<ActionResult<UserServerRelation>> CreateRelaion(UserServerRelation relation)
         {
             var oldRelation = await userServerRelationContext.Relations.SingleOrDefaultAsync(
@@ -70,6 +73,7 @@ namespace SSHKeysManager.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
         public async Task<IActionResult> DeleteRelation(long id)
         {
             var relation = await userServerRelationContext.Relations.FindAsync(id);

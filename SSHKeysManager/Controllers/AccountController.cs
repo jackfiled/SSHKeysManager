@@ -163,6 +163,7 @@ namespace SSHKeysManager.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: Const.Issuer,
+                audience: user.EmailAddress,
                 notBefore: DateTime.Now,
                 expires: DateTime.Now.AddDays(3),
                 claims: claims,

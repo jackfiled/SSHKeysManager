@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using SSHKeysManager.Models;
+using System.Text;
 
 namespace SSHKeysManager.Controllers
 {
@@ -20,7 +21,7 @@ namespace SSHKeysManager.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<string>>> ServerLogin(string token)
+        public async Task<ActionResult<string>> ServerLogin(string token)
         {
             var server = await serverContext.Servers.SingleOrDefaultAsync(x => x.Token == token);
 
@@ -33,17 +34,17 @@ namespace SSHKeysManager.Controllers
                         where relation.ServerId == server.Id
                         select relation;
 
-            List<string> result = new List<string>();
-            foreach(var relation in query)
+            StringBuilder result = new StringBuilder();
+            foreach (var relation in query)
             {
                 var tokenQuery = from key in sshKeysContext.Keys
                                  where key.UserId == relation.UserId
                                  select key.Key;
 
-                result.AddRange(tokenQuery.ToList());
+                result.AppendLine(tokenQuery.ToString());
             }
 
-            return Ok(result);
+            return Ok(result.ToString());
         }
     }
 }

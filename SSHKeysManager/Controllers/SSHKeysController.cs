@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSHKeysManager.Models;
 
@@ -6,6 +7,7 @@ namespace SSHKeysManager.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministratorOrOwner")]
     public class SSHKeysController : ControllerBase
     {
         private readonly SSHKeysContext sshKeysContext;
