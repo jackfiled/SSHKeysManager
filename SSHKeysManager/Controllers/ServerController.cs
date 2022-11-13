@@ -6,20 +6,20 @@ using SSHKeysManager.Common;
 namespace SSHKeysManager.Controllers
 {
     [ApiController]
-    [Route("[controller")]
+    [Route("[controller]")]
     public class ServerController : ControllerBase
     {
-        private readonly ServerContext _serverContext;
+        private readonly ServerContext serverContext;
 
         public ServerController(ServerContext serverContext)
         {
-            _serverContext = serverContext;
+            this.serverContext = serverContext;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Server>>> GetServerList()
         {
-            var servers = await _serverContext.Servers.ToListAsync();
+            var servers = await serverContext.Servers.ToListAsync();
 
             return Ok(servers);
         }
@@ -27,7 +27,7 @@ namespace SSHKeysManager.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Server>> GetSingleServer(long id)
         {
-            var server = await _serverContext.Servers.FindAsync(id);
+            var server = await serverContext.Servers.FindAsync(id);
 
             if (server == null)
             {
@@ -42,7 +42,7 @@ namespace SSHKeysManager.Controllers
         [HttpPost]
         public async Task<ActionResult<Server>> CreateServer(Server s)
         {
-            var sever = await _serverContext.Servers.SingleOrDefaultAsync(s => s.Name== s.Name);
+            var sever = await serverContext.Servers.SingleOrDefaultAsync(s => s.Name== s.Name);
 
             if (sever == null)
             {
@@ -58,8 +58,8 @@ namespace SSHKeysManager.Controllers
                 {
                     newServer.Token = s.Token;
                 }
-                _serverContext.Servers.Add(newServer);
-                await _serverContext.SaveChangesAsync();
+                serverContext.Servers.Add(newServer);
+                await serverContext.SaveChangesAsync();
 
                 return CreatedAtAction(
                     nameof(GetSingleServer),
@@ -80,7 +80,7 @@ namespace SSHKeysManager.Controllers
                 return BadRequest();
             }
 
-            var oldServer = await _serverContext.Servers.FindAsync(id);
+            var oldServer = await serverContext.Servers.FindAsync(id);
             if (oldServer == null)
             {
                 return NotFound();
@@ -94,7 +94,7 @@ namespace SSHKeysManager.Controllers
             {
                 oldServer.Token = server.Token;
             }
-            await _serverContext.SaveChangesAsync();
+            await serverContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -102,15 +102,15 @@ namespace SSHKeysManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServer(long id)
         {
-            var server = await _serverContext.Servers.FindAsync(id);
+            var server = await serverContext.Servers.FindAsync(id);
 
             if (server == null)
             {
                 return NotFound();
             }
 
-            _serverContext.Servers.Remove(server);
-            await _serverContext.SaveChangesAsync();
+            serverContext.Servers.Remove(server);
+            await serverContext.SaveChangesAsync();
 
             return NoContent();
         }

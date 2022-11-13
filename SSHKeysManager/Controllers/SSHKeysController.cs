@@ -8,17 +8,17 @@ namespace SSHKeysManager.Controllers
     [Route("[controller]")]
     public class SSHKeysController : ControllerBase
     {
-        private readonly SSHKeysContext _sshKeysContext;
+        private readonly SSHKeysContext sshKeysContext;
 
         public SSHKeysController(SSHKeysContext sshKeysContext)
         {
-            _sshKeysContext = sshKeysContext;
+            this.sshKeysContext = sshKeysContext;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SSHKey>>> GetAllKeys()
         {
-            var keys = await _sshKeysContext.Keys.ToListAsync();
+            var keys = await sshKeysContext.Keys.ToListAsync();
 
             return Ok(keys);
         }
@@ -26,7 +26,7 @@ namespace SSHKeysManager.Controllers
         [HttpGet("{user}")]
         public async Task<ActionResult<IEnumerable<SSHKey>>> GetSingleUserKeys(long user)
         {
-            var keys = await _sshKeysContext.Keys
+            var keys = await sshKeysContext.Keys
                 .Where(k => k.UserId== user)
                 .ToListAsync();
 
@@ -37,7 +37,7 @@ namespace SSHKeysManager.Controllers
         [HttpGet("{user}/{id}")]
         public async Task<ActionResult<Server>> GetSingleKey(long user, long id)
         {
-            var key = await _sshKeysContext.Keys.FindAsync(id);
+            var key = await sshKeysContext.Keys.FindAsync(id);
 
             if (key == null)
             {
@@ -68,8 +68,8 @@ namespace SSHKeysManager.Controllers
                 // 等待实现服务器生成公钥私钥对
             }
 
-            _sshKeysContext.Keys.Add(key);
-            await _sshKeysContext.SaveChangesAsync();
+            sshKeysContext.Keys.Add(key);
+            await sshKeysContext.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(GetSingleKey),
@@ -80,7 +80,7 @@ namespace SSHKeysManager.Controllers
         [HttpDelete("{user}/{id}")]
         public async Task<IActionResult> DeleteKey(long user, long id)
         {
-            var key = await _sshKeysContext.Keys.FindAsync(id);
+            var key = await sshKeysContext.Keys.FindAsync(id);
 
             if (key == null)
             {
@@ -90,8 +90,8 @@ namespace SSHKeysManager.Controllers
             // 判断请求的用户id和数据库中记录的用户ID是否一致
             if (key.UserId == user)
             {
-                _sshKeysContext.Keys.Remove(key);
-                await _sshKeysContext.SaveChangesAsync();
+                sshKeysContext.Keys.Remove(key);
+                await sshKeysContext.SaveChangesAsync();
 
                 return NoContent();
             }

@@ -18,13 +18,13 @@ namespace SSHKeysManager.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserContext _userContext;
-        private readonly IConfiguration _configuration;
+        private readonly UserContext userContext;
+        private readonly IConfiguration configuration;
 
         public AccountController(UserContext userContext, IConfiguration configuration)
         {
-            _userContext = userContext;
-            _configuration = configuration;
+            this.userContext = userContext;
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace SSHKeysManager.Controllers
             else
             {
                 loginModel.Password = Utils.HashPassword10000(loginModel.Password);
-                var user = await _userContext.Users.SingleAsync(u => u.Password == loginModel.Password);
+                var user = await userContext.Users.SingleAsync(u => u.Password == loginModel.Password);
                 
                 // 登录之后还是返回一些基本的信息
                 return Ok(new
@@ -67,7 +67,7 @@ namespace SSHKeysManager.Controllers
         {
             // 判断数据库中是否存在相同的电子邮件地址
             // 不允许相同的电子邮件地址
-            var user = await _userContext.Users.SingleOrDefaultAsync(u => u.EmailAddress == registerModel.EmailAddress);
+            var user = await userContext.Users.SingleOrDefaultAsync(u => u.EmailAddress == registerModel.EmailAddress);
             
             if (user != null)
             {
@@ -80,8 +80,8 @@ namespace SSHKeysManager.Controllers
             newUser.Permission = (int)UserPermission.User;
             newUser.Password = Utils.HashPassword10000(registerModel.Password);
 
-            _userContext.Users.Add(newUser);
-            await _userContext.SaveChangesAsync();
+            userContext.Users.Add(newUser);
+            await userContext.SaveChangesAsync();
 
             return Ok();
         }
@@ -101,11 +101,11 @@ namespace SSHKeysManager.Controllers
                 return BadRequest("EmaillAddress or password is invalid");
             }
 
-            var user = await _userContext.Users.SingleAsync(u => u.EmailAddress == passwordModel.EmailAddress);
+            var user = await userContext.Users.SingleAsync(u => u.EmailAddress == passwordModel.EmailAddress);
 
             user.Password = Utils.HashPassword10000(passwordModel.newPassword);
 
-            await _userContext.SaveChangesAsync();
+            await userContext.SaveChangesAsync();
             return Ok();
         }
 
@@ -124,7 +124,7 @@ namespace SSHKeysManager.Controllers
                 return "";
             }
 
-            var user = await _userContext.Users.SingleOrDefaultAsync(u => u.EmailAddress == emailAddress); ;
+            var user = await userContext.Users.SingleOrDefaultAsync(u => u.EmailAddress == emailAddress); ;
             if (user == null)
             {
                 return "";
@@ -145,7 +145,7 @@ namespace SSHKeysManager.Controllers
                 new Claim("Permission", user.Permission.ToString()),
             };
 
-            string? jwtSecret = _configuration["JwtSecret"];
+            string? jwtSecret = configuration["JwtSecret"];
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Const.JwtSecret));
             // 由于目前在验证身份中间件中无法访问依赖注入框架
             // 暂时无法自定义生成JWT令牌的密钥

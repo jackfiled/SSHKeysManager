@@ -11,25 +11,25 @@ namespace SSHKeysManager.Controllers
     [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
     public class UserController : ControllerBase
     {
-        private readonly UserContext _userContext;
-        private readonly IConfiguration _configuration;
+        private readonly UserContext userContext;
+        private readonly IConfiguration configuration;
 
         public UserController(UserContext userContext, IConfiguration configuration)
         {
-            _userContext = userContext;
-            _configuration = configuration;
+            this.userContext = userContext;
+            this.configuration = configuration;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _userContext.Users.ToListAsync();
+            return await userContext.Users.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetSingleUser(long id)
         {
-            var user = await _userContext.Users.FindAsync(id);
+            var user = await userContext.Users.FindAsync(id);
 
             if (user == null)
             {
@@ -42,8 +42,8 @@ namespace SSHKeysManager.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
-            _userContext.Users.Add(user);
-            await _userContext.SaveChangesAsync();
+            userContext.Users.Add(user);
+            await userContext.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(GetSingleUser),
@@ -59,7 +59,7 @@ namespace SSHKeysManager.Controllers
                 return BadRequest();
             }
 
-            var oldUser = await _userContext.Users.FindAsync(id);
+            var oldUser = await userContext.Users.FindAsync(id);
             if (oldUser == null)
             {
                 return NotFound();
@@ -68,7 +68,7 @@ namespace SSHKeysManager.Controllers
             oldUser.Name = user.Name;
             oldUser.EmailAddress= user.EmailAddress;
             
-            await _userContext.SaveChangesAsync();
+            await userContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -76,15 +76,15 @@ namespace SSHKeysManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(long id)
         {
-            var user = await _userContext.Users.FindAsync(id);
+            var user = await userContext.Users.FindAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            _userContext.Users.Remove(user);
-            await _userContext.SaveChangesAsync();
+            userContext.Users.Remove(user);
+            await userContext.SaveChangesAsync();
 
             return NoContent();
         }
