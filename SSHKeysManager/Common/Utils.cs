@@ -2,8 +2,8 @@
 using System.Text;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
-using SSHKeysManager.Models;
 using Microsoft.Data.Sqlite;
+using SSHKeysManager.Models;
 
 namespace SSHKeysManager.Common
 {
@@ -40,6 +40,22 @@ namespace SSHKeysManager.Common
             }
 
             return password;
+        }
+
+        /// <summary>
+        /// 产生SSH公钥和私钥
+        /// </summary>
+        /// <param name="emailAddress">用户的电子邮件地址</param>
+        /// <returns>数组第一位是私钥，第二位是公钥</returns>
+        public static string[] GenerateSSHKeys(string emailAddress)
+        {
+            var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
+            string[] result = new string[2];
+
+            result[0] = keygen.ToPrivateKey();
+            result[1] = keygen.ToRfcPublicKey(emailAddress);
+
+            return result;
         }
 
         /// <summary>
