@@ -37,33 +37,20 @@ namespace SSHKeysManager.Auth.PolicyHandlers
     /// </summary>
     public class IsOwnerHandler : AuthorizationHandler<IsAdministratorOrOwnerRequirement>
     {
-        private readonly UserContext userContext;
-
-        public IsOwnerHandler(UserContext userContext)
-        {
-            // 通过令牌中的接收者为用户的电子邮件地址
-            // 在数据库中拿到用户的id
-            this.userContext = userContext;
-        }
-
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsAdministratorOrOwnerRequirement requirement)
         {
-            string emailAddress = context.User.FindFirstValue("aud");
+            string idString = context.User.FindFirstValue("id");
 
-            if (emailAddress == null)
+            if (idString == null)
             {
                 return Task.CompletedTask;
             }
 
-            var user = userContext.Users.Single(u => u.EmailAddress== emailAddress);
-
-            // 这里其实是反向验证
-            // 判断请求的路径中是否有请求用户的id
             if (context.Resource is HttpContext httpContext)
             {
-                string requestPath = httpContext.Request.Path;
+                string path = httpContext.Request.Path;
 
-                if (requestPath.Contains(user.Id.ToString()))
+                if (path.Contains(idString))
                 {
                     context.Succeed(requirement);
                 }

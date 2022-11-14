@@ -141,6 +141,7 @@ namespace SSHKeysManager.Controllers
             // 个人定制的信息
             var claims = new[]
             {
+                new Claim("UserID", user.Id.ToString()),
                 new Claim("Name", user.Name),
                 new Claim("Permission", user.Permission.ToString()),
             };
