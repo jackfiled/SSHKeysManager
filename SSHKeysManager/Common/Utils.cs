@@ -74,7 +74,7 @@ namespace SSHKeysManager.Common
         public static void SetupDatabase()
         {
             // 建立数据库连接
-            DbConnection connection = new SqliteConnection("Filename=example.db");
+            DbConnection connection = new SqliteConnection("Filename=SSHKeysManager.db");
             connection.Open();
             var userContextOptions = new DbContextOptionsBuilder<UserContext>()
                 .UseSqlite(connection)

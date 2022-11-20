@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 
 // 添加Sqlite数据库服务
 // Sqlite数据库连接
-DbConnection _connection = new SqliteConnection("Filename=example.db");
+DbConnection _connection = new SqliteConnection("Filename=SSHKeysManager.db");
 _connection.Open();
 builder.Services.AddDbContext<UserContext>(options =>
 {
