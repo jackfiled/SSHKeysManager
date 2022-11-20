@@ -86,9 +86,8 @@ namespace SSHKeysManager.Controllers
                 sshKeysContext.Keys.Add(key);
                 await sshKeysContext.SaveChangesAsync();
 
-                return CreatedAtAction(
-                    nameof(GetSingleKey),
-                    new { key.Id },
+                return Created(
+                    $"sshkeys/{key.UserId}/{key.Id}",
                     new
                     {
                         privateKey = keys[0],
@@ -103,8 +102,7 @@ namespace SSHKeysManager.Controllers
                 await sshKeysContext.SaveChangesAsync();
 
                 return CreatedAtAction(
-                    nameof(GetSingleKey),
-                    new { key.Id },
+                    $"sshkeys/{key.UserId}/{key.Id}",
                     key);
             }
         }

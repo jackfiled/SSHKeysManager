@@ -11,10 +11,14 @@ namespace SSHKeysManager.Controllers
     public class RelationController : ControllerBase
     {
         private readonly UserServerRelationContext userServerRelationContext;
+        private readonly UserContext userContext;
+        private readonly ServerContext serverContext;
 
-        public RelationController(UserServerRelationContext userServerRelationContext)
+        public RelationController(UserServerRelationContext userServerRelationContext, UserContext userContext, ServerContext serverContext)
         {
             this.userServerRelationContext = userServerRelationContext;
+            this.userContext = userContext;
+            this.serverContext = serverContext;
         }
 
         [HttpGet]
@@ -53,6 +57,15 @@ namespace SSHKeysManager.Controllers
         [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
         public async Task<ActionResult<UserServerRelation>> CreateRelaion(UserServerRelation relation)
         {
+            // 确认提供的用户和服务器id是有效的
+            var user = await userContext.Users.FindAsync(relation.UserId);
+            var server = await serverContext.Servers.FindAsync(relation.ServerId);
+
+            if (user == null || server == null)
+            {
+                return BadRequest("The userid or serverid is invalid");
+            }
+
             var oldRelation = await userServerRelationContext.Relations.SingleOrDefaultAsync(
                 r => r.UserId== relation.UserId && r.ServerId== relation.ServerId);
 

@@ -8,7 +8,7 @@ namespace SSHKeysManager.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(AuthenticationSchemes = "userAuthenntication", Policy = "IsAdministrator")]
+    [Authorize(AuthenticationSchemes = "userAuthentication", Policy = "IsAdministrator")]
     public class ServerController : ControllerBase
     {
         private readonly ServerContext serverContext;
@@ -88,11 +88,11 @@ namespace SSHKeysManager.Controllers
                 return NotFound();
             }
 
-            if (string.IsNullOrEmpty(server.Name))
+            if (!string.IsNullOrEmpty(server.Name))
             {
                 oldServer.Name = server.Name;
             }
-            if (string.IsNullOrEmpty(server.Token))
+            if (!string.IsNullOrEmpty(server.Token))
             {
                 oldServer.Token = server.Token;
             }

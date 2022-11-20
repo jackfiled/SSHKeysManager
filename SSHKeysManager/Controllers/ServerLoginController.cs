@@ -35,13 +35,18 @@ namespace SSHKeysManager.Controllers
                         select relation;
 
             StringBuilder result = new StringBuilder();
-            foreach (var relation in query)
+            var relations = query.ToArray();
+            foreach (var relation in relations)
             {
                 var tokenQuery = from key in sshKeysContext.Keys
                                  where key.UserId == relation.UserId
                                  select key.Key;
 
-                result.AppendLine(tokenQuery.ToString());
+                string[] tokens = tokenQuery.ToArray();
+                foreach(string t in tokens)
+                {
+                    result.AppendLine(t);
+                }
             }
 
             return Ok(result.ToString());
